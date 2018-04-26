@@ -1,21 +1,53 @@
 package com.thesamet.intellij
 
-import com.intellij.openapi.actionSystem.{ AnAction, AnActionEvent, CommonDataKeys }
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.actionSystem._
+import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.components.ServiceManager
-import com.intellij.openapi.fileEditor.{ FileDocumentManager, FileEditorManager }
-
-import scalariform.formatter.preferences._
-import scalariform.formatter.preferences.AlignSingleLineCaseStatements.MaxArrowIndent
-import scalariform.formatter.ScalaFormatter
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.editor.Document
+import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.vfs.VirtualFile
+import scalariform.formatter.ScalaFormatter
+import scalariform.formatter.preferences.AlignSingleLineCaseStatements.MaxArrowIndent
+import scalariform.formatter.preferences._
 
 case class FileDocument(file: VirtualFile, document: Document) {
-  def isScala: Boolean = file.getFileType.getName == "Scala"
+  def isScala: Boolean = true //file.getFileType.getName == "Scala"
 }
 
 class ScalariformFormatAction extends AnAction {
+
+  /*def loadPreferences(path: String): Unit = {
+    val prefs = PreferencesImporterExporter.loadPreferences(path)
+    val state = ServiceManager.getService(classOf[ScalariformState])
+    def castedGet[T](descriptor: PreferenceDescriptor[T]) = prefs.preferencesMap.get(descriptor).asInstanceOf[Option[T]]
+    castedGet(AlignArguments).foreach(state.setAlignArguments)
+    castedGet(AlignParameters).foreach(state.setAlignParameters)
+    castedGet(AlignSingleLineCaseStatements).foreach(state.setAlignSingleLineCase)
+    castedGet(AlignSingleLineCaseStatements.MaxArrowIndent).foreach(state.setAlignSingleLineCaseStatementsMaxArrowIndent(_))
+    castedGet(IndentSpaces).foreach(state.setIndentSpaces(_))
+    castedGet(SpaceBeforeColon).foreach(state.setSpaceBeforeColon)
+    castedGet(CompactStringConcatenation).foreach(state.setCompactStringConcatenation)
+    castedGet(PreserveSpaceBeforeArguments).foreach(state.setPreserveSpaceBeforeArguments)
+    castedGet(AlignParameters).foreach(state.setAlignParameters)
+    castedGet(DoubleIndentConstructorArguments).foreach(state.setDoubleIndentClassDeclaration)
+    castedGet(FormatXml).foreach(state.setFormatXML)
+    castedGet(IndentPackageBlocks).foreach(state.setIndentPackageBlocks)
+    castedGet(AlignSingleLineCaseStatements).foreach(state.setAlignSingleLineCase)
+    castedGet(MaxArrowIndent).foreach(state.setAlignSingleLineCaseStatementsMaxArrowIndent(_))
+    castedGet(IndentLocalDefs).foreach(state.setIndentLocalDefs)
+    castedGet(SpaceInsideParentheses).foreach(state.setSpaceInsideParenthesis)
+    castedGet(SpaceInsideBrackets).foreach(state.setSpaceInsideBrackets)
+    castedGet(SpacesWithinPatternBinders).foreach(state.setSpacesWithinPatternBinders)
+    castedGet(MultilineScaladocCommentsStartOnFirstLine).foreach(state.setMultilineScalaDocCommentsStartOnFirstLine)
+    castedGet(IndentWithTabs).foreach(state.setIndentWithTabs)
+    castedGet(CompactControlReadability).foreach(state.setCompactControlReadability)
+    castedGet(PlaceScaladocAsterisksBeneathSecondAsterisk).foreach(state.setPlaceScalaDocAsteriskBeneathSecondAsterisk)
+    castedGet(DoubleIndentMethodDeclaration).foreach(state.setDoubleIndentMethodDeclaration)
+    castedGet(AlignArguments).foreach(state.setAlignArguments)
+    castedGet(SpacesAroundMultiImports).foreach(state.setSpacesAroundMultiImports)
+    castedGet(DanglingCloseParenthesis).foreach(i => state.setDanglingCloseParenthesis(i.toString))
+  }*/
+
   override def update(event: AnActionEvent): Unit = {
     event.getPresentation.setEnabled(getCurrentFileDocument(event).exists(_.isScala))
   }
@@ -23,27 +55,25 @@ class ScalariformFormatAction extends AnAction {
   override def actionPerformed(event: AnActionEvent) {
     lazy val pref = formattingPreferences
     getCurrentFileDocument(event)
+      .filterNot(_.file.isDirectory)
       .filter(_.isScala)
       .foreach {
         fileDoc =>
           val source = fileDoc.document.getText()
           val formatted = ScalaFormatter.format(source, formattingPreferences = pref)
           if (source != formatted) {
-            ApplicationManager.getApplication.runWriteAction(new Runnable {
-              override def run(): Unit = {
-                fileDoc.document.setText(formatted)
-              }
+            val project = event.getData(CommonDataKeys.PROJECT)
+            WriteCommandAction.runWriteCommandAction(project, "Scalariform", null, new Runnable {
+              override def run(): Unit = fileDoc.document.setText(formatted)
             })
           }
       }
   }
 
-  private def getCurrentFileDocument(event: AnActionEvent): Option[FileDocument] = for {
-    project <- Option(event.getData(CommonDataKeys.PROJECT))
-    editor <- Option(FileEditorManager.getInstance(project).getSelectedTextEditor)
-    document <- Option(editor.getDocument)
-    vfile <- Option(FileDocumentManager.getInstance().getFile(document))
-  } yield FileDocument(vfile, document)
+  private def getCurrentFileDocument(event: AnActionEvent): Seq[FileDocument] = for {
+    vdir <- event.getDataContext.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY).toSeq
+    vfile <- if(vdir.isDirectory) vdir.getChildren else Array(vdir)
+  } yield FileDocument(vfile, FileDocumentManager.getInstance().getDocument(vfile))
 
   private def formattingPreferences: FormattingPreferences = {
     val component: ScalariformState = ServiceManager.getService(classOf[ScalariformState])

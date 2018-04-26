@@ -1,6 +1,12 @@
 package com.thesamet.intellij;
 
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 
 /**
  * Created by nadavsr on 5/31/14.
@@ -15,7 +21,6 @@ public class ScalariformConfigurationForm {
     private JCheckBox indentPackageBlocksCheckBox;
     private JCheckBox indentWithTabsCheckBox;
     private JCheckBox multilineScalaDocCommentsStartCheckBox;
-    private JCheckBox preserveDanglingCloseParenthesisCheckBox;
     private JCheckBox placeScalaDocAsterisksBeneathCheckBox;
     private JCheckBox preserveSpaceBeforeArgumentsCheckBox;
     private JCheckBox rewriteArrowSymbolsCheckBox;
@@ -31,6 +36,23 @@ public class ScalariformConfigurationForm {
     private JCheckBox alignArgumentsCheckBox;
     private JCheckBox spacesAroundMultiImportsCheckBox;
     private JComboBox danglingCloseParenthesisComboBox;
+    private TextFieldWithBrowseButton importFileTextField;
+    private JButton importButton;
+    private JCheckBox automaticallyFormatOnFileCheckBox;
+
+    public ScalariformConfigurationForm() {
+        importButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(new File(importFileTextField.getText()).exists()) {
+                    /*ScalariformFormatAction formatAction = (ScalariformFormatAction) ActionManager.getInstance().getAction("ScalariformIdea.com.thesamet.intellij.ScalariformFormatAction");
+                    ScalariformState state = formatAction.loadPreferences(importFileTextField.getText());
+                    setData(state);*/
+
+                }
+            }
+        });
+    }
 
     public JPanel getRootComponent() {
         return rootComponent;
@@ -60,6 +82,7 @@ public class ScalariformConfigurationForm {
         alignArgumentsCheckBox.setSelected(data.isAlignArguments());
         spacesAroundMultiImportsCheckBox.setSelected(data.isSpacesAroundMultiImports());
         danglingCloseParenthesisComboBox.setSelectedItem(data.getDanglingCloseParenthesis());
+        automaticallyFormatOnFileCheckBox.setSelected(data.isAutoFormatEnabled());
     }
 
     public void getData(ScalariformState data) {
@@ -92,6 +115,7 @@ public class ScalariformConfigurationForm {
         data.setAlignArguments(alignArgumentsCheckBox.isSelected());
         data.setSpacesAroundMultiImports(spacesAroundMultiImportsCheckBox.isSelected());
         data.setDanglingCloseParenthesis(danglingCloseParenthesisComboBox.getSelectedItem().toString());
+        data.setAutoFormatEnabled(automaticallyFormatOnFileCheckBox.isSelected());
     }
 
     public boolean isModified(ScalariformState data) {
@@ -125,6 +149,7 @@ public class ScalariformConfigurationForm {
         if (alignArgumentsCheckBox.isSelected() != data.isAlignArguments()) return true;
         if (spacesAroundMultiImportsCheckBox.isSelected() != data.isSpacesAroundMultiImports()) return true;
         if (danglingCloseParenthesisComboBox.getSelectedItem() != data.getDanglingCloseParenthesis()) return true;
+        if(automaticallyFormatOnFileCheckBox.isSelected() != data.isAutoFormatEnabled()) return true;
         return false;
     }
 }
