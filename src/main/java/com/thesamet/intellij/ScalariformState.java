@@ -10,16 +10,15 @@ import com.intellij.util.xmlb.XmlSerializerUtil;
  */
 @State(name = "ScalariformSettings", storages = {@Storage("scalariform.xml")})
 public class ScalariformState implements PersistentStateComponent<ScalariformState> {
-    private boolean alignParameters = false;
-    private boolean alignSingleLineCase = false;
+    private boolean alignParameters = true;
+    private boolean alignSingleLineCase = true;
     private boolean compactControlReadability = false;
     private boolean compactStringConcatenation = false;
     private boolean doubleIndentClassDeclaration = false;
     private boolean formatXML = false;
-    private boolean indentPackageBlocks = true;
+    private boolean indentPackageBlocks = false;
     private boolean indentWithTabs = false;
     private boolean multilineScalaDocCommentsStartOnFirstLine = false;
-    private boolean preserveDanglineCloseParenthesis = false;
     private boolean placeScalaDocAsteriskBeneathSecondAsterisk = false;
     private boolean preserveSpaceBeforeArguments = false;
     private boolean rewriteArrowSymbols = false;
@@ -30,6 +29,42 @@ public class ScalariformState implements PersistentStateComponent<ScalariformSta
     private Integer indentSpaces = 2;
     private boolean indentLocalDefs;
     private boolean spaceInsideBrackets;
+    private boolean doubleIndentMethodDeclaration = true;
+    private boolean alignArguments = true;
+    private boolean spacesAroundMultiImports = false;
+    private String  danglingCloseParenthesis = "force";
+
+    public boolean isDoubleIndentMethodDeclaration() {
+        return doubleIndentMethodDeclaration;
+    }
+
+    public void setDoubleIndentMethodDeclaration(boolean doubleIndentMethodDeclaration) {
+        this.doubleIndentMethodDeclaration = doubleIndentMethodDeclaration;
+    }
+
+    public boolean isAlignArguments() {
+        return alignArguments;
+    }
+
+    public void setAlignArguments(boolean alignArguments) {
+        this.alignArguments = alignArguments;
+    }
+
+    public boolean isSpacesAroundMultiImports() {
+        return spacesAroundMultiImports;
+    }
+
+    public void setSpacesAroundMultiImports(boolean spacesAroundMultiImports) {
+        this.spacesAroundMultiImports = spacesAroundMultiImports;
+    }
+
+    public String getDanglingCloseParenthesis() {
+        return danglingCloseParenthesis;
+    }
+
+    public void setDanglingCloseParenthesis(String danglingCloseParenthesis) {
+        this.danglingCloseParenthesis = danglingCloseParenthesis;
+    }
 
     public boolean isAlignSingleLineCase() {
         return alignSingleLineCase;
@@ -93,14 +128,6 @@ public class ScalariformState implements PersistentStateComponent<ScalariformSta
 
     public void setMultilineScalaDocCommentsStartOnFirstLine(boolean multilineScalaDocCommentsStartOnFirstLine) {
         this.multilineScalaDocCommentsStartOnFirstLine = multilineScalaDocCommentsStartOnFirstLine;
-    }
-
-    public boolean isPreserveDanglineCloseParenthesis() {
-        return preserveDanglineCloseParenthesis;
-    }
-
-    public void setPreserveDanglineCloseParenthesis(boolean preserveDanglineCloseParenthesis) {
-        this.preserveDanglineCloseParenthesis = preserveDanglineCloseParenthesis;
     }
 
     public boolean isPlaceScalaDocAsteriskBeneathSecondAsterisk() {
