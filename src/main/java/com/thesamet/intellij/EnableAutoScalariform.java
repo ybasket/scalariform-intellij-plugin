@@ -9,8 +9,8 @@ public class EnableAutoScalariform extends AnAction {
     @Override
     public void update(AnActionEvent e) {
         if(e.getProject() != null) {
-            ScalariformState scalariformState = ServiceManager.getService(e.getProject(), ScalariformState.class);
-            if (scalariformState.isAutoFormatEnabled()) {
+            AutoScalariformState autoScalariformState = ServiceManager.getService(e.getProject(), AutoScalariformState.class);
+            if (autoScalariformState != null && autoScalariformState.isAutoFormatEnabled()) {
                 e.getPresentation().setIcon(IconLoader.getIcon("/icon-scalariform.png"));
             } else {
                 e.getPresentation().setIcon(IconLoader.getIcon("/icon-scalariform-disabled.png"));
@@ -21,8 +21,9 @@ public class EnableAutoScalariform extends AnAction {
     @Override
     public void actionPerformed(AnActionEvent e) {
         if(e.getProject() != null) {
-            ScalariformState scalariformState = ServiceManager.getService(e.getProject(), ScalariformState.class);
-            scalariformState.setAutoFormatEnabled(!scalariformState.isAutoFormatEnabled());
+            AutoScalariformState autoScalariformState = ServiceManager.getService(e.getProject(), AutoScalariformState.class);
+            if (autoScalariformState != null)
+                autoScalariformState.setAutoFormatEnabled(!autoScalariformState.isAutoFormatEnabled());
         }
     }
 }

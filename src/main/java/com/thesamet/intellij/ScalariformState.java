@@ -34,8 +34,6 @@ public class ScalariformState implements PersistentStateComponent<ScalariformSta
     private boolean spacesAroundMultiImports = false;
     private String  danglingCloseParenthesis = "force";
 
-    private boolean autoFormatEnabled = false;
-
     public boolean isDoubleIndentMethodDeclaration() {
         return doubleIndentMethodDeclaration;
     }
@@ -229,13 +227,5 @@ public class ScalariformState implements PersistentStateComponent<ScalariformSta
     @Override
     public ScalariformState getState() {
         return this;
-    }
-
-    public boolean isAutoFormatEnabled() {
-        return autoFormatEnabled;
-    }
-
-    public void setAutoFormatEnabled(boolean autoFormatEnabled) {
-        this.autoFormatEnabled = autoFormatEnabled;
     }
 }

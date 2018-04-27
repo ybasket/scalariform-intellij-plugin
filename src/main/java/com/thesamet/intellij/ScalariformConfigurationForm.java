@@ -38,7 +38,6 @@ public class ScalariformConfigurationForm {
     private JComboBox danglingCloseParenthesisComboBox;
     private TextFieldWithBrowseButton importFileTextField;
     private JButton importButton;
-    private JCheckBox automaticallyFormatOnFileCheckBox;
 
     public ScalariformConfigurationForm() {
         importButton.addActionListener(new ActionListener() {
@@ -82,7 +81,6 @@ public class ScalariformConfigurationForm {
         alignArgumentsCheckBox.setSelected(data.isAlignArguments());
         spacesAroundMultiImportsCheckBox.setSelected(data.isSpacesAroundMultiImports());
         danglingCloseParenthesisComboBox.setSelectedItem(data.getDanglingCloseParenthesis());
-        automaticallyFormatOnFileCheckBox.setSelected(data.isAutoFormatEnabled());
     }
 
     public void getData(ScalariformState data) {
@@ -115,7 +113,6 @@ public class ScalariformConfigurationForm {
         data.setAlignArguments(alignArgumentsCheckBox.isSelected());
         data.setSpacesAroundMultiImports(spacesAroundMultiImportsCheckBox.isSelected());
         data.setDanglingCloseParenthesis(danglingCloseParenthesisComboBox.getSelectedItem().toString());
-        data.setAutoFormatEnabled(automaticallyFormatOnFileCheckBox.isSelected());
     }
 
     public boolean isModified(ScalariformState data) {
@@ -149,7 +146,6 @@ public class ScalariformConfigurationForm {
         if (alignArgumentsCheckBox.isSelected() != data.isAlignArguments()) return true;
         if (spacesAroundMultiImportsCheckBox.isSelected() != data.isSpacesAroundMultiImports()) return true;
         if (danglingCloseParenthesisComboBox.getSelectedItem() != data.getDanglingCloseParenthesis()) return true;
-        if(automaticallyFormatOnFileCheckBox.isSelected() != data.isAutoFormatEnabled()) return true;
         return false;
     }
 }

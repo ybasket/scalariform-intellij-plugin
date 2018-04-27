@@ -33,13 +33,14 @@
         <!-- Add your project components here -->
         <component>
             <implementation-class>com.thesamet.intellij.AutoScalariform</implementation-class>
-            <loadForDefaultProject/>
+            <!--<loadForDefaultProject/>-->
         </component>
     </project-components>
 
     <extensions defaultExtensionNs="com.intellij">
         <applicationService serviceImplementation="com.thesamet.intellij.ScalariformState"/>
         <applicationConfigurable id="Scalariform" groupId="language" instance="com.thesamet.intellij.ScalariformApplicationComponent" />
+        <projectService serviceImplementation="com.thesamet.intellij.AutoScalariformState"/>
         <projectService serviceImplementation="com.thesamet.intellij.AutoScalariform"/>
     </extensions>
 

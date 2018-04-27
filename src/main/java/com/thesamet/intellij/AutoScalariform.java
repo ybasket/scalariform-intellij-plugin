@@ -22,8 +22,8 @@ public class AutoScalariform {
 
             @Override
             protected void onBeforeFileChange(@NotNull VirtualFile file) {
-                ScalariformState scalariformState = ServiceManager.getService(project, ScalariformState.class);
-                if(scalariformState.isAutoFormatEnabled()) {
+                AutoScalariformState autoScalariformState = ServiceManager.getService(project, AutoScalariformState.class);
+                if(autoScalariformState != null && autoScalariformState.isAutoFormatEnabled()) {
                     if (file.getName().toLowerCase().endsWith(".scala")) {
                         AnAction action = ActionManager.getInstance().getAction("ScalariformIdea.com.thesamet.intellij.ScalariformFormatAction");
                         DataContext dataContext = dataId -> {
